@@ -1,35 +1,48 @@
 import pygame
-import player
+from player import Player
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
 from constants import *
+
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    game_status = True
+    game_running = True
     game_clock = pygame.time.Clock()
+
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
+
+    Player.containers = (updatable, drawable)
+    Asteroid.containers = (updatable, drawable, asteroids)
+    AsteroidField.containers = updatable
+
+    field = AsteroidField()
+    player_ship = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+
     delta_time = 0
 
-    player_ship = player.Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-
-    while game_status:
-        # Respond to window closure
+    while game_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-            
-        #Clock
-        dt = game_clock.tick(60) / 1000
-            
-        #Setup basic background:
-        screen.fill('#000000')
-        player_ship.draw(screen)
-        player_ship.update(dt)
-        pygame.display.flip()
-        
 
-    # print(f"Starting asteroids!")
-    # print(f"Screen width: {SCREEN_WIDTH}")
-    # print(f"Screen height: {SCREEN_HEIGHT}")
+        for obj in updatable:
+            obj.update(delta_time)
+
+        screen.fill("#000000")
+
+        for obj in drawable:
+            obj.draw(screen)
+
+        pygame.display.flip()
+
+        # limit the framerate to 60 FPS
+        delta_time = game_clock.tick(60) / 1000
+
+
 
 if __name__ == '__main__': 
     main()
