@@ -3,7 +3,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from constants import *
-
+import sys
 
 def main():
     pygame.init()
@@ -32,6 +32,10 @@ def main():
         for obj in updatable:
             obj.update(delta_time)
 
+        for obj in asteroids:
+            if obj.detect_collision(player_ship):
+                print('Game over!')
+                sys.exit()
         screen.fill("#000000")
 
         for obj in drawable:
