@@ -36,10 +36,16 @@ def main():
         for obj in updatable:
             obj.update(delta_time)
 
-        for obj in asteroids:
-            if obj.detect_collision(player_ship):
+        for ast in asteroids:
+            if ast.detect_collision(player_ship):
                 print('Game over!')
                 sys.exit()
+
+            for bullet in shots:
+                if ast.detect_collision(bullet):
+                    ast.split()
+                    bullet.kill()
+
         screen.fill("#000000")
 
         for obj in drawable:
